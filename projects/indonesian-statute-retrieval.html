@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Indonesian Statute Retrieval — Ghana Ahmada Yudistira</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="../index.html" class="nav__brand">Ghana</a>
+      <a href="../index.html#projects" class="nav__back">&larr; Back to projects</a>
+    </nav>
+  </header>
+
+  <main>
+    <article class="project-detail">
+      <div class="container">
+        <h1>Structural Graph-Enhanced Statute Retrieval Across Diverse Legal Systems</h1>
+        <p class="project-detail__meta">Undergraduate Thesis &middot; Jan 2026 - Jun 2026</p>
+        <p class="project-detail__stack">Python, PyTorch, vLLM, Graph Neural Networks, Agentic Retrieval, Information Retrieval</p>
+
+        <section>
+          <h2>Overview</h2>
+          <p>
+            Statute retrieval requires bridging the gap between narrative queries and formal statutory
+            language  - a challenge that intensifies as queries become less formal. Existing benchmarks
+            evaluate at a single query formality level and rely on sparse citation-derived relevance
+            judgments, preventing controlled comparison of how formality affects retrieval performance.
+          </p>
+          <p>
+            This thesis addresses three gaps. First, no existing dataset provides multi-formality
+            evaluation with overlapping relevance labels derived from the same court decisions for
+            Indonesian statute law. Second, existing GNN-based retrievers either parse corpus-specific
+            structure that does not generalize across jurisdictions, or ignore the legislative hierarchy
+            entirely. Third, agentic retrieval for statute retrieval has not been combined with structural
+            graph-based retrieval.
+          </p>
+        </section>
+
+        <section>
+          <h2>Contributions</h2>
+          <ul>
+            <li>
+              <strong>PERSTAT</strong>, the first Indonesian statute retrieval dataset providing
+              two query formality levels (summarized case and layperson), derived from the same court
+              decisions over 2,127 articles in the KUHPerdata (Indonesian Civil Code). Ground truth is
+              expanded via a two-phase LLM screening and validation pipeline, verified by three law
+              student annotators.
+            </li>
+            <li>
+              <strong>StructGNN</strong>, a graph neural network that extends Para-GNN with
+              structural node features encoding legislative hierarchy as deterministic hash embeddings.
+              The method requires only a title parser and the order of appearance of articles within
+              structural units, making it simpler to adapt to new corpora than approaches requiring full
+              legislative graph construction.
+            </li>
+            <li>
+              <strong>Agentic extension</strong>, an LLM-orchestrated retrieval agent (powered
+              by Qwen3.5-35B via vLLM) combining StructGNN with iterative search through four tools:
+              <code>search_corpus</code>, <code>grep_corpus</code>, <code>read_document</code>, and
+              <code>prune_chunks</code>. Inspired by
+              <a href="https://www.trychroma.com/research/context-1" target="_blank" rel="noopener">Chroma Context-1</a>.
+            </li>
+            <li>
+              <strong>Evaluation on four corpora</strong> in four languages, each trained and
+              evaluated independently: PERSTAT (Indonesian), BSARD (French), STARD (Chinese), and
+              COLIEE (English).
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Dataset: PERSTAT</h2>
+          <p>
+            PERSTAT is constructed from 8,000+ Indonesian civil court decision PDFs over the KUHPerdata
+            (Indonesian Civil Code, 2,127 articles). The dataset provides two query formality levels
+            derived from the same court decisions: summarized case queries and layperson queries,
+            totaling 1,981 queries per variant.
+          </p>
+          <p>The creation pipeline consists of three phases:</p>
+          <ol>
+            <li>
+              <strong>Query Extraction</strong> - court decision PDFs are processed through a
+              three-phase LLM pipeline (blueprint, worker, synthesizer) to extract legal facts and
+              citation-based relevance labels. Two query variants are generated per case: a summarized
+              case version and a layperson version.
+            </li>
+            <li>
+              <strong>Ground Truth Expansion</strong> - a two-phase LLM pipeline (screening + validation)
+              expands the sparse citation-based labels. The screening phase evaluates candidates in batch,
+              then the validation phase re-checks each candidate individually with strict element-by-element
+              verification. Overall acceptance rate is 0.4-0.5%.
+            </li>
+            <li>
+              <strong>Human Validation</strong> - three final-year law students independently annotated
+              80 query-article pairs to verify the expanded ground truth labels.
+            </li>
+          </ol>
+          <figure>
+            <img src="../assets/projects/indonesian-statute-retrieval/dataset-creation.png" alt="PERSTAT dataset creation pipeline: query extraction from court decisions, ground truth expansion via two-phase LLM screening and validation">
+          </figure>
+        </section>
+
+        <section>
+          <h2>Approach</h2>
+          <p>
+            StructGNN injects hierarchical structure directly into node features rather than constructing
+            explicit cross-article edges. Each statute node receives a <strong>structural hash</strong>
+            (a 64-dimensional deterministic pseudo-random vector derived from its structural unit name via
+            SHA-256) and a <strong>positional rank encoding</strong> (a 32-dimensional sinusoidal vector
+            based on the article's normalized position within its unit). These are concatenated with the
+            1024-dimensional BGE-M3 semantic embedding and projected back to 1024 dimensions via a learned
+            linear layer with LayerNorm, then fed into a two-layer
+            <a href="https://doi.org/10.1007/s11280-026-01407-w" target="_blank" rel="noopener">Edge-Updated Graph Attention (EUGAT)</a>
+            network.
+          </p>
+          <p>
+            The final retrieval score blends GNN and BM25 signals with a global blending weight selected
+            via grid search. Training uses cross-entropy loss with inverse propensity score weighting to
+            reduce hub document bias.
+          </p>
+        </section>
+
+        <section>
+          <h2>Results</h2>
+          <p>
+            StructGNN achieves statistically significant improvements on all corpora with hierarchical
+            statute organization across three languages, validated with Wilcoxon signed-rank tests
+            (Holm-corrected <em>p</em> &lt; 0.001).
+          </p>
+
+          <h3>Table 4.1: Results on PERSTAT</h3>
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Method</th>
+                <th rowspan="2">Setting</th>
+                <th colspan="3">Summarized Case</th>
+                <th colspan="3">Layperson</th>
+              </tr>
+              <tr>
+                <th>MRR</th><th>R@10</th><th>R@100</th>
+                <th>MRR</th><th>R@10</th><th>R@100</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="group-header"><td colspan="8">Inference Methods</td></tr>
+              <tr><td>BM25</td><td>unigram</td><td>0.080</td><td>0.114</td><td>0.248</td><td>0.033</td><td>0.043</td><td>0.118</td></tr>
+              <tr><td>Dense</td><td>cosine similarity</td><td>0.097</td><td>0.121</td><td>0.280</td><td>0.064</td><td>0.068</td><td>0.232</td></tr>
+              <tr><td>GAR</td><td>corpus graph</td><td>0.171</td><td>0.157</td><td>0.194</td><td>0.072</td><td>0.066</td><td>0.102</td></tr>
+              <tr><td>SPLADE</td><td>sparse dot product</td><td>0.059</td><td>0.065</td><td>0.224</td><td>0.026</td><td>0.054</td><td>0.154</td></tr>
+              <tr><td>MILCO</td><td>base</td><td>0.044</td><td>0.073</td><td>0.271</td><td>0.062</td><td>0.093</td><td>0.289</td></tr>
+              <tr><td>MILCO (LE)</td><td>LexEcho</td><td>0.049</td><td>0.075</td><td>0.272</td><td>0.054</td><td>0.071</td><td>0.285</td></tr>
+              <tr class="group-header"><td colspan="8">Finetuned Methods</td></tr>
+              <tr><td>CatBoost-BGE</td><td>product features</td><td>0.424</td><td>0.539</td><td>0.741</td><td>0.516</td><td>0.657</td><td>0.825</td></tr>
+              <tr><td>Para-GNN</td><td>adapted</td><td>0.229</td><td>0.485</td><td class="best">0.924</td><td>0.509</td><td>0.646</td><td class="best">0.906</td></tr>
+              <tr><td>StructGNN</td><td>struct. hash</td><td class="best">0.440</td><td class="best">0.601</td><td>0.905</td><td class="best">0.650</td><td class="best">0.698</td><td>0.902</td></tr>
+              <tr class="group-header"><td colspan="8">Agentic Methods</td></tr>
+              <tr><td>Ag + Dense</td><td>LLM orchestrated</td><td>0.368</td><td>0.314</td><td>-</td><td>0.336</td><td>0.277</td><td>-</td></tr>
+              <tr><td>Ag + StructGNN</td><td>LLM orchestrated</td><td class="best">0.567</td><td class="best">0.628</td><td>-</td><td class="best">0.576</td><td class="best">0.694</td><td>-</td></tr>
+            </tbody>
+            <caption>Ag = Agentic. Bold = best in group (Wilcoxon signed-rank, Holm-corrected <em>p</em> &lt; 0.05).</caption>
+          </table>
+
+          <h3>Table 4.2: Results on Additional Corpora</h3>
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Method</th>
+                <th colspan="3">BSARD (FR)</th>
+                <th colspan="3">STARD (ZH)</th>
+                <th colspan="3">COLIEE (EN)</th>
+              </tr>
+              <tr>
+                <th>MRR</th><th>R@10</th><th>R@100</th>
+                <th>MRR</th><th>R@10</th><th>R@100</th>
+                <th>MRR</th><th>R@10</th><th>R@100</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="group-header"><td colspan="10">Inference Methods</td></tr>
+              <tr><td>BM25</td><td>0.249</td><td>0.266</td><td>0.483</td><td>0.340</td><td>0.427</td><td>0.640</td><td>0.784</td><td>0.916</td><td>0.981</td></tr>
+              <tr><td>Dense</td><td>0.292</td><td>0.314</td><td>0.593</td><td>0.465</td><td>0.548</td><td>0.794</td><td>0.759</td><td>0.879</td><td>0.972</td></tr>
+              <tr><td>GAR</td><td>0.359</td><td>0.371</td><td>0.585</td><td>0.490</td><td>0.560</td><td>0.699</td><td>0.830</td><td class="best">0.963</td><td>0.991</td></tr>
+              <tr><td>SPLADE</td><td>0.265</td><td>0.266</td><td>0.518</td><td>0.348</td><td>0.428</td><td>0.649</td><td>0.800</td><td>0.935</td><td>0.991</td></tr>
+              <tr><td>MILCO</td><td>0.318</td><td>0.323</td><td>0.635</td><td>0.445</td><td>0.527</td><td>0.728</td><td>0.739</td><td>0.897</td><td>0.981</td></tr>
+              <tr><td>MILCO (LE)</td><td>0.297</td><td>0.317</td><td>0.614</td><td>0.492</td><td>0.558</td><td>0.763</td><td>0.745</td><td>0.897</td><td>0.981</td></tr>
+              <tr class="group-header"><td colspan="10">Finetuned Methods</td></tr>
+              <tr><td>CatBoost-BGE</td><td>0.303</td><td>0.280</td><td>0.387</td><td>0.253</td><td>0.383</td><td>0.581</td><td>0.675</td><td>0.832</td><td>0.935</td></tr>
+              <tr><td>Para-GNN</td><td>0.441</td><td>0.468</td><td>0.766</td><td>0.520</td><td>0.629</td><td>0.828</td><td>0.800</td><td>0.935</td><td>0.981</td></tr>
+              <tr><td>StructGNN</td><td class="best">0.570</td><td class="best">0.606</td><td class="best">0.861</td><td class="best">0.599</td><td class="best">0.697</td><td class="best">0.887</td><td class="best">0.812</td><td>0.944</td><td class="best">1.000</td></tr>
+              <tr class="group-header"><td colspan="10">Agentic Methods</td></tr>
+              <tr><td>Ag + Dense</td><td>0.552</td><td>0.459</td><td>-</td><td>0.687</td><td>0.708</td><td>-</td><td class="best">0.917</td><td class="best">0.972</td><td>-</td></tr>
+              <tr><td>Ag + StructGNN</td><td class="best">0.658</td><td class="best">0.636</td><td>-</td><td class="best">0.736</td><td class="best">0.779</td><td>-</td><td>0.907</td><td>0.972</td><td>-</td></tr>
+            </tbody>
+            <caption>Ag = Agentic. Bold = best in group (Wilcoxon signed-rank, Holm-corrected <em>p</em> &lt; 0.05).</caption>
+          </table>
+
+          <p>
+            Ablation studies show that the structural hash alone is the primary contributor; positional
+            encoding alone provides smaller gains and combining them can increase dimensionality without
+            additional benefit.
+          </p>
+        </section>
+
+        <section>
+          <h2>Links</h2>
+          <ul>
+            <li><a href="#">Code / repository</a></li>
+            <li><a href="#">Paper / thesis document</a></li>
+          </ul>
+        </section>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Ghana Ahmada Yudistira.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

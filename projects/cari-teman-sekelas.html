@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cari Teman Sekelas - Ghana Ahmada Yudistira</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="../index.html" class="nav__brand">Ghana</a>
+      <a href="../index.html#projects" class="nav__back">&larr; Back to projects</a>
+    </nav>
+  </header>
+
+  <main>
+    <article class="project-detail">
+      <div class="container">
+        <h1>Cari Teman Sekelas</h1>
+        <p class="project-detail__meta">Dashboard &middot; Aug 2022</p>
+        <p class="project-detail__stack">Python, Streamlit, Google API</p>
+
+        <section>
+          <h2>Overview</h2>
+          <p>
+            A simple dashboard built from faculty-shared CSV data that helped 400+ freshman students
+            at the Faculty of Computer Science, Universitas Indonesia, find classmates in their first
+            term. Students could search by name or student ID to see which classes they shared with
+            others, making it easier to connect during orientation.
+          </p>
+          <p>
+            The first iteration was built and released on the same day the faculty published the
+            class schedule sheet, allowing students to immediately find their classmates before
+            the term started.
+          </p>
+        </section>
+
+        <section>
+          <h2>How It Works</h2>
+          <ul>
+            <li>Faculty-provided CSV files containing student class schedules are parsed and indexed.</li>
+            <li>A Streamlit dashboard lets students search by name or student ID.</li>
+            <li>The app displays shared classes between any two students, helping freshmen find familiar faces in their schedule.</li>
+            <li>Google API collects user feedback and reviews from students.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Links</h2>
+          <ul>
+            <li><a href="https://github.com/ghanahmada/cari-teman-sekelas" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="vertical-align: -2px; margin-right: 4px;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> Repository</a></li>
+          </ul>
+        </section>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Ghana Ahmada Yudistira.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

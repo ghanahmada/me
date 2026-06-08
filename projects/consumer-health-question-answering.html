@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consumer Health Question Answering — Ghana Ahmada Yudistira</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="../index.html" class="nav__brand">Ghana</a>
+      <a href="../index.html#projects" class="nav__back">&larr; Back to projects</a>
+    </nav>
+  </header>
+
+  <main>
+    <article class="project-detail">
+      <div class="container">
+        <h1>Consumer Health Question Answering</h1>
+        <p class="project-detail__meta">Research &amp; Demo &middot; GEMASTIK XVII Data Mining (2nd Winner) &middot; Jun 2024</p>
+        <p class="project-detail__stack">Python, ColBERT, Llama3-8B, Active Retrieval, Docker</p>
+        <p>
+          Co-authored with Eryawan Presma Yulianrifat, Belati Jagad Bintang Syuhada,
+          and supervised by Alfan Farizki Wicaksono.
+        </p>
+
+        <section>
+          <h2>Overview</h2>
+          <p>
+            An Indonesian consumer health consultation system that combines LLMs as the answer generator
+            with retrieval models as the answer candidate retriever. The system addresses healthcare
+            accessibility gaps in Indonesia, particularly in remote areas (3T regions) where medical
+            facilities and professionals are scarce.
+          </p>
+          <p>
+            The system uses an Active Multi Retrieval approach: multiple domain-specific retrievers
+            (doctor answers, disease info, medicine descriptions) supply relevant context to the LLM,
+            and retrieval is triggered dynamically when the LLM generates low-confidence tokens,
+            reducing hallucination.
+          </p>
+          <figure>
+            <img src="../assets/projects/consumer-health-question-answering/diagram-sistem.png" alt="System architecture: multi-retriever pipeline feeding doctor answers, disease, and medicine context into LLM with active retrieval">
+          </figure>
+        </section>
+
+        <section>
+          <h2>Dataset</h2>
+          <p>
+            Built from Alodokter.com forum data, split into three aspects: doctor Q&A pairs (f),
+            disease information (p), and medicine descriptions (o). Queries for disease and medicine
+            data were generated synthetically using GPT-4o.
+          </p>
+          <ul>
+            <li>Training: 800 doctor Q&A pairs + 800 medicine + 800 disease entries</li>
+            <li>Evaluation: 200 doctor Q&A pairs (medicine and disease excluded to avoid synthetic bias)</li>
+            <li>Each retrieval query paired with 9 BM25-sampled hard negatives (at 90th, 95th, 99th percentile)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Methodology</h2>
+          <p>The system consists of two main modules:</p>
+          <h3>Answer Candidate Retriever</h3>
+          <p>
+            ColBERT with an IndoBERT encoder, fine-tuned on the health forum dataset using ColBERTv2
+            training (KL-Divergence loss + hard negative sampling). Compared against BM25, BM25 + BERT
+            reranker, Dense Passage Retrieval (DPR), and ColBERT-XM (zero-shot multilingual).
+            The fine-tuned ColBERT achieved the best MRR@10 of 0.667.
+          </p>
+          <h3>Answer Generator</h3>
+          <p>
+            Four retrieval integration strategies were evaluated with multiple LLMs
+            (Sailor-7B, Llama3-8B-Instruct, OpenOrcaPlatypus2-13B, ChatGPT3.5):
+          </p>
+          <ul>
+            <li><strong>Direct Prompting</strong> - LLM answers without any retrieved context</li>
+            <li><strong>Single Retrieval</strong> - one retrieval pass feeds context to the LLM</li>
+            <li><strong>Multi Retrieval</strong> - retrieves from all three collections (doctor answers, diseases, medicines) simultaneously</li>
+            <li><strong>Active Retrieval</strong> - retrieval triggered dynamically when LLM token confidence drops below a threshold</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Retrieval Performance</h2>
+          <figure>
+            <img src="../assets/projects/consumer-health-question-answering/retrieval-performance.png" alt="Retrieval model comparison: MRR@10 vs latency for BM25, DPR, ColBERT variants">
+          </figure>
+        </section>
+
+        <section>
+          <h2>Results</h2>
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Method</th>
+                <th rowspan="2">METEOR</th>
+                <th rowspan="2">ROUGE-L</th>
+                <th rowspan="2">GLEU</th>
+                <th colspan="3">BERTScore</th>
+              </tr>
+              <tr>
+                <th>Precision</th><th>Recall</th><th>F1</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="group-header"><td colspan="7">Sailor-7B</td></tr>
+              <tr><td>Direct Prompt</td><td>0.1187</td><td>0.1378</td><td>0.0014</td><td>0.7036</td><td>0.7662</td><td>0.7316</td></tr>
+              <tr><td>Single Retrieval</td><td>0.1185</td><td>0.1286</td><td>0.0048</td><td>0.6701</td><td>0.7603</td><td>0.7080</td></tr>
+              <tr><td>Multi Retrieval</td><td>0.1438</td><td>0.1569</td><td>0.0283</td><td>0.6715</td><td>0.7610</td><td>0.7088</td></tr>
+              <tr><td>Active Retrieval</td><td>0.0914</td><td class="best">0.2933</td><td>0.0068</td><td>0.3493</td><td>0.4693</td><td>0.3836</td></tr>
+              <tr class="group-header"><td colspan="7">Llama3-8B-Instruct</td></tr>
+              <tr><td>Direct Prompt</td><td>0.1274</td><td>0.1994</td><td>0.0045</td><td>0.8229</td><td>0.8452</td><td>0.8374</td></tr>
+              <tr><td>Single Retrieval</td><td>0.1580</td><td>0.2378</td><td>0.0174</td><td>0.8280</td><td>0.8443</td><td>0.8353</td></tr>
+              <tr><td>Multi Retrieval</td><td>0.1454</td><td>0.2165</td><td>0.0121</td><td>0.8235</td><td>0.8413</td><td>0.8319</td></tr>
+              <tr><td>Active Retrieval</td><td>0.0883</td><td>0.2793</td><td>0.0060</td><td class="best">0.8773</td><td class="best">0.8598</td><td class="best">0.8682</td></tr>
+              <tr class="group-header"><td colspan="7">OpenOrcaPlatypus2-13B</td></tr>
+              <tr><td>Direct Prompt</td><td class="best">0.1739</td><td>0.2291</td><td>0.0078</td><td>0.8058</td><td>0.8319</td><td>0.8403</td></tr>
+              <tr><td>Single Retrieval</td><td>0.1732</td><td>0.2424</td><td>0.0107</td><td>0.8330</td><td>0.8494</td><td>0.8470</td></tr>
+              <tr><td>Multi Retrieval</td><td class="best">0.1845</td><td>0.2478</td><td class="best">0.0212</td><td>0.6747</td><td>0.7235</td><td>0.8459</td></tr>
+              <tr><td>Active Retrieval</td><td>0.0979</td><td class="best">0.3035</td><td>0.0079</td><td>0.3869</td><td>0.4921</td><td>0.4181</td></tr>
+              <tr class="group-header"><td colspan="7">ChatGPT3.5</td></tr>
+              <tr><td>Direct Prompt</td><td>0.1274</td><td>0.1822</td><td>0.0014</td><td>0.8304</td><td>0.8507</td><td>0.8183</td></tr>
+              <tr><td>Single Retrieval</td><td class="best">0.2255</td><td class="best">0.2870</td><td class="best">0.0735</td><td>0.8401</td><td>0.8543</td><td class="best">0.8407</td></tr>
+              <tr><td>Multi Retrieval</td><td>0.2023</td><td>0.2627</td><td>0.0574</td><td>0.8379</td><td>0.8543</td><td>0.6917</td></tr>
+            </tbody>
+            <caption>Answer generator evaluation across retrieval strategies and LLMs. Bold = best in group.</caption>
+          </table>
+          <p>
+            Llama3-8B with Active Retrieval produces the most coherent outputs among open models,
+            achieving competitive results with ChatGPT3.5 (175B parameters) despite being significantly
+            smaller. Multi Retrieval with Llama3-8B generates the most complete and descriptive answers
+            in qualitative evaluation.
+          </p>
+        </section>
+
+        <section>
+          <h2>Demo (Screenshot)</h2>
+          <figure>
+            <img src="../assets/projects/consumer-health-question-answering/demo.jpg" alt="Consumer Health QA demo interface showing chat-based health consultation with retrieval-augmented responses">
+          </figure>
+        </section>
+
+        <section>
+          <h2>Links</h2>
+          <ul>
+            <li>Paper (GEMASTIK XVII Data Mining, 2nd Winner)</li>
+          </ul>
+        </section>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Ghana Ahmada Yudistira.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

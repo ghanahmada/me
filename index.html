@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ghana Ahmada Yudistira - AI/ML Engineer</title>
+  <meta name="description" content="Portfolio of Ghana Ahmada Yudistira, AI/ML Engineer and Data Scientist.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="#top" class="nav__brand">Ghana</a>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__links" id="navLinks">
+        <li><a href="#about">About</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#awards">Awards</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="top">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero__inner">
+        <h1 class="hero__name">Ghana Ahmada Yudistira</h1>
+        <p class="hero__tagline">AI/ML Engineer · Data Scientist</p>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section">
+      <div class="container">
+        <h2 class="section__title">About</h2>
+        <p>
+          I'm a final-year Information Systems student at Universitas Indonesia (Cumulative GPA 3.94/4.00),
+          with relevant coursework in Data Structures &amp; Algorithms, Information Retrieval, Deep Learning and
+          Data Science &amp; Artificial Intelligence.
+        </p>
+        <p>
+          My core interests are in Information Retrieval, Natural Language Processing, and Machine
+          Learning. I'm also exploring Multimodal Learning and Inference Engineering.
+          Outside of work, I balance screen time with tennis on the court 🎾
+        </p>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="experience" class="section section--alt">
+      <div class="container">
+        <h2 class="section__title">Experience</h2>
+        <ol class="timeline">
+
+          <li class="timeline__item">
+            <div class="timeline__head">
+              <h3>AI Engineer - Maknadata</h3>
+              <span class="timeline__date">Mar 2025 - Present · Jakarta, ID</span>
+            </div>
+            <ul>
+              <li>Collaborate on HLD and system design for backend AI applications, including LLM-as-a-judge evaluation strategies for RAG verdict and reasoning quality.</li>
+              <li>Built a production RAG-based ISO and regulation audit system processing multimodal policy documents, integrated with Google Drive on GCP (Vertex AI, Cloud Storage) with NewRelic for Backend + LLM observability. Cutting audit time from 2 weeks to 3 days at ~85% conformity accuracy.</li>
+              <li>Built a production interview summarization platform that scaled to a fixed 30 concurrent requests using a load balancer with Celery workers on Redis.</li>
+              <li>Benchmarked proprietary vs open-source speech, language, and omni models to assess the viability of self-hosting via open-source serving frameworks (vLLM & SGLang) against third-party APIs (Gemini-Live). Developed practical metric frameworks to analyze use case quality, throughput, latency, and operational overhead.</li>
+            </ul>
+          </li>
+          <li class="timeline__item">
+            <div class="timeline__head">
+              <h3>AI Engineer (Part-Time Contract) - PT Pharos Indonesia</h3>
+              <span class="timeline__date">Jul 2025 - Jan 2026 · Jakarta, ID</span>
+            </div>
+            <ul>
+              <li>Built a brand social listening dashboard (Python, Vue.js) scraping Twitter, TikTok, and YouTube daily, using a hybrid vLLM + third-party LLM engine to classify intent and content over a 2-year window.</li>
+              <li>Created an end-to-end N8N marketing automation workflow, from ideation to image content production which customizable per brand team.</li>
+            </ul>
+          </li>
+
+          <li class="timeline__item">
+            <div class="timeline__head">
+              <h3>AI Researcher Intern - HeyHi Pte Ltd</h3>
+              <span class="timeline__date">Sep 2024 - Dec 2024 · Singapore</span>
+            </div>
+            <ul>
+              <li>Created a domain-specific synthetic dataset using an LLM to ensure high-quality, task-relevant training data, grounded in scientific literature.</li>
+              <li>Fine-tuned multiple LLMs: Llama 3.1 &amp; Qwen 2.5 8B parameter classes, on the generated dataset using the NVIDIA NeMo Framework. Inference served via NVIDIA NIM.</li>
+            </ul>
+          </li>
+
+          <li class="timeline__item">
+            <div class="timeline__head">
+              <h3>Data Scientist (Contract) - PT Transportasi Jakarta</h3>
+              <span class="timeline__date">Sep 2023 - Jan 2024 · Jakarta, ID</span>
+            </div>
+            <ul>
+              <li>Engineered features from raw bus GPS data to train ML models for arrival prediction.</li>
+              <li>Developed an Estimated Time of Arrival (ETA) pipeline for Transjakarta buses and added asynchronous inference, increasing inference speed by over 30%.</li>
+            </ul>
+          </li>
+
+          <li class="timeline__item timeline__item--muted">
+            <div class="timeline__head">
+              <h3>Data Analyst Intern - PT Tiga Bintang Sejahtera Food</h3>
+              <span class="timeline__date">Jun 2023 - Aug 2023 · Tangerang, ID</span>
+            </div>
+            <ul>
+              <li>Processed distributor sales data across branches with Python and built regional/individual performance dashboards in Tableau.</li>
+            </ul>
+          </li>
+
+        </ol>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="section">
+      <div class="container">
+        <h2 class="section__title">Projects</h2>
+        <div class="project-list">
+
+          <article class="project">
+            <div class="project__head">
+              <h3><a href="projects/indonesian-statute-retrieval.html">Structural Graph-Enhanced Statute Retrieval</a></h3>
+              <span class="project__date">Undergraduate Thesis · Jan 2026 - Jun 2026</span>
+            </div>
+            <p>
+              Introduced PERSTAT, the first Indonesian statute retrieval dataset with two query formality
+              levels derived from the same court decisions, and proposed StructGNN, a GNN that encodes
+              legislative hierarchy as deterministic hash features. Achieved statistically significant
+              improvements over baselines on all corpora with hierarchical structure across four languages
+              (Indonesian, French, Chinese, English). An LLM-orchestrated agentic extension further
+              improved MRR across the majority of evaluation settings.
+            </p>
+            <p class="project__stack">Python, PyTorch, vLLM, Graph Neural Networks, Agentic Retrieval, Information Retrieval</p>
+          </article>
+
+          <article class="project">
+            <div class="project__head">
+              <h3><a href="projects/nasdaq-stock-news-hybrid-retrieval.html">NASDAQ Stock News Hybrid Retrieval</a></h3>
+              <span class="project__date">Information Retrieval Course Final Project · Dec 2024</span>
+            </div>
+            <p>
+              A mini search engine over sampled NASDAQ stock news comparing sparse and dense retrieval
+              methods - BM25, OpenAI embeddings, and ColBERT - through a deployed experimental demo.
+            </p>
+            <p class="project__stack">Python, Information Retrieval, Docker</p>
+          </article>
+
+          <article class="project">
+            <div class="project__head">
+              <h3><a href="projects/consumer-health-question-answering.html">Consumer Health Question Answering</a></h3>
+              <span class="project__date">Research · Jun 2024</span>
+            </div>
+            <p>
+              A health consultation system powered by Llama3-8B assisted by a fine-tuned ColBERT
+              retriever, drawing on past doctor answers, disease, and medicine data. Co-authored a
+              scientific paper on the system and shipped a deployed demo.
+            </p>
+            <p class="project__stack">Python, Large Language Models, Information Retrieval, Docker</p>
+          </article>
+
+          <article class="project">
+            <div class="project__head">
+              <h3><a href="projects/financial-graph-anomaly-detection.html">Financial Graph Anomaly Detection</a></h3>
+              <span class="project__date">Ristek Datathon 2024 · Jun 2024</span>
+            </div>
+            <p>
+              Used DGraph - a large-scale financial graph anomaly detection dataset - under official
+              permission for a hosted datathon. Designed feature engineering guided by the source paper
+              and evaluated each feature's real-world impact on model performance.
+            </p>
+            <p class="project__stack">Python, PyTorch</p>
+          </article>
+
+          <article class="project">
+            <div class="project__head">
+              <h3><a href="projects/customer-review-satisfaction.html">Customer Review Satisfaction</a></h3>
+              <span class="project__date">Dashboard · Jun 2023</span>
+            </div>
+            <p>
+              Scraped Google Maps reviews with Pandas, used an LLM to extract aspect-level features,
+              and built a dashboard comparing customer satisfaction across five coffee shop branches.
+            </p>
+            <p class="project__stack">Python, Tableau, Pandas</p>
+          </article>
+
+          <article class="project">
+            <div class="project__head">
+              <h3><a href="projects/vehicle-plate-ocr.html">Vehicle Number Plates Detection</a></h3>
+              <span class="project__date">Deep Learning &middot; Jun 2023</span>
+            </div>
+            <p>
+              Fine-tuned <code>microsoft/trocr-base-printed</code> for Indonesian vehicle plate
+              recognition with augmented training data (super resolution, motion blur, adaptive
+              thresholding). Deployed on Hugging Face with a Flask server and HTML frontend.
+            </p>
+            <p class="project__stack">Python, PyTorch, Hugging Face, Flask</p>
+          </article>
+
+          <article class="project">
+            <div class="project__head">
+              <h3><a href="projects/earthquake-early-detection.html">Earthquake Early Detection System</a></h3>
+              <span class="project__date">Research &middot; Feb 2023</span>
+            </div>
+            <p>
+              A two-stage earthquake early warning system using gradient boosting trees for magnitude
+              prediction and CNN+LSTM for S-Wave arrival estimation, trained on the STEAD dataset.
+              Achieved 90.6% recall on magnitude classification and 1.0s MAE on S-Wave prediction.
+            </p>
+            <p class="project__stack">Python, LightGBM, CatBoost, LSTM, CNN, Optuna</p>
+          </article>
+
+          <article class="project">
+            <div class="project__head">
+              <h3><a href="projects/cari-teman-sekelas.html">Cari Teman Sekelas</a></h3>
+              <span class="project__date">Dashboard · Aug 2022</span>
+            </div>
+            <p>
+              A simple dashboard built from faculty-shared CSV data that helped 400+ freshman students
+              at the Faculty of Computer Science find classmates in their first term.
+            </p>
+            <p class="project__stack">Python, Streamlit, Google API</p>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills" class="section section--alt">
+      <div class="container">
+        <h2 class="section__title">Skills</h2>
+        <dl class="skills">
+          <div class="skills__row">
+            <dt>Languages</dt>
+            <dd>Python (advanced), SQL, Java, Golang</dd>
+          </div>
+          <div class="skills__row">
+            <dt>Machine Learning &amp; Artificial Intelligence</dt>
+            <dd>Machine Learning, PyTorch, Scikit-learn, NLP, Computer Vision, Information Retrieval, Large Language Models, vLLM, LangChain, LangGraph, Vertex AI</dd>
+          </div>
+          <div class="skills__row">
+            <dt>Data &amp; Infrastructure</dt>
+            <dd>PostgreSQL, SQL, Docker, GCP, AWS S3, Redis, Nginx, Milvus, Qdrant, GitHub Actions</dd>
+          </div>
+          <div class="skills__row">
+            <dt>Tools &amp; Other</dt>
+            <dd>Pandas, NumPy, Tableau, Selenium, Spring Boot, Vue.js</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- Awards -->
+    <section id="awards" class="section">
+      <div class="container">
+        <h2 class="section__title">Awards &amp; Recognition</h2>
+        <ul class="awards">
+          <li>
+            <span class="awards__title">2nd Winner - Data Mining, GEMASTIK XVII</span>
+            <span class="awards__meta">Ministry of Education · Sep 2024 · vs. 330 teams</span>
+          </li>
+          <li>
+            <span class="awards__title">Finalist - Smart Logistics Datathon</span>
+            <span class="awards__meta">The Chinese University of Hong Kong · Apr 2024</span>
+          </li>
+          <li>
+            <span class="awards__title">2nd Winner - Datavidia, Arkavidia 8.0</span>
+            <span class="awards__meta">Bandung Institute of Technology · Feb 2023</span>
+          </li>
+          <li>
+            <span class="awards__title">Semi-finalist - Big Data Challenge, Satria Data</span>
+            <span class="awards__meta">Ministry of Education · Sep 2023</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section section--alt">
+      <div class="container contact">
+        <h2 class="section__title">Get in touch</h2>
+<ul class="contact__list">
+          <li><a href="mailto:ghanamada@gmail.com">ghanamada@gmail.com</a></li>
+          <li><a href="https://www.linkedin.com/in/ghana-ahmada-yudistira-41a877226/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://github.com/ghanahmada" target="_blank" rel="noopener">GitHub</a></li>
+          <li>Kota Bekasi, Indonesia</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Ghana Ahmada Yudistira. Built with plain HTML &amp; CSS.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

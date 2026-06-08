@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Graph Anomaly Detection - Ghana Ahmada Yudistira</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="../index.html" class="nav__brand">Ghana</a>
+      <a href="../index.html#projects" class="nav__back">&larr; Back to projects</a>
+    </nav>
+  </header>
+
+  <main>
+    <article class="project-detail">
+      <div class="container">
+        <h1>Financial Graph Anomaly Detection</h1>
+        <p class="project-detail__meta">Datathon &middot; Jun 2024</p>
+        <p class="project-detail__stack">Python, PyTorch, Graph Analytics</p>
+
+        <section>
+          <h2>Overview</h2>
+          <p>
+            Fraud detection on financial networks is fundamentally different from tabular
+            classification. Anomalous accounts often look normal in isolation but reveal themselves
+            through structural signals: unusual connectivity patterns, neighbor distributions, and
+            temporal dynamics. This project explores graph-based anomaly detection on
+            <a href="https://arxiv.org/abs/2207.03579" target="_blank" rel="noopener">DGraph</a>
+            (Huang et al., NeurIPS 2022), a large-scale real-world financial graph with ~3M nodes,
+            ~4M dynamic edges, and ~1M ground-truth labels, used under official permission for
+            Ristek Datathon 2024.
+          </p>
+        </section>
+
+        <section>
+          <figure>
+            <img src="../assets/projects/financial-graph-anomaly-detection/dgraph-overview.png" alt="DGraph dynamic graph structure: Finvolution users, emergency contacts, and borrowing behaviour over time with fraud and normal node labels">
+            <figcaption>Figure from Huang et al., "DGraph: A Large-Scale Financial Dataset for Graph Anomaly Detection" (NeurIPS 2022).</figcaption>
+          </figure>
+        </section>
+
+        <section>
+          <h2>Graph-Level Feature Engineering</h2>
+          <p>
+            Our role was limited to setting up the DGraph dataset for the datathon competition.
+            Nevertheless, studying the paper and dataset in depth provided a solid understanding
+            of the domain and the graph-based feature engineering strategies that distinguish
+            fraudulent accounts from legitimate ones:
+          </p>
+          <ul>
+            <li>
+              <strong>Connectivity patterns</strong> - degree distributions, in/out-degree ratios,
+              and edge density within local neighborhoods to identify accounts with abnormal
+              transaction volumes or asymmetric flows.
+            </li>
+            <li>
+              <strong>Neighbor distribution</strong> - aggregated statistics (mean, std, skewness)
+              of neighbor features to detect accounts surrounded by other anomalous nodes,
+              exploiting the homophily of fraudulent clusters.
+            </li>
+            <li>
+              <strong>Temporal dynamics</strong> - transaction timing features capturing bursts of
+              activity or unusual temporal spacing that distinguish fraud from legitimate usage.
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Links</h2>
+          <ul>
+            <li><a href="https://colab.research.google.com/drive/1Zrz2NDScgUQbzBf2KxMgaf4LR10R_nGS" target="_blank" rel="noopener">Notebook</a></li>
+            <li><a href="https://arxiv.org/abs/2207.03579" target="_blank" rel="noopener">DGraph Paper (Huang et al., NeurIPS 2022)</a></li>
+          </ul>
+        </section>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Ghana Ahmada Yudistira.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

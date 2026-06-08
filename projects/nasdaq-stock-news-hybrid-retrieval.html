@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NASDAQ Stock News Hybrid Retrieval — Ghana Ahmada Yudistira</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="../index.html" class="nav__brand">Ghana</a>
+      <a href="../index.html#projects" class="nav__back">&larr; Back to projects</a>
+    </nav>
+  </header>
+
+  <main>
+    <article class="project-detail">
+      <div class="container">
+        <h1>NASDAQ Stock News Hybrid Retrieval</h1>
+        <p class="project-detail__meta">Information Retrieval Course Final Project · Dec 2024</p>
+        <p class="project-detail__stack">Python, Information Retrieval, Docker</p>
+
+        <section>
+          <h2>Overview</h2>
+          <p>
+            A mini search engine over sampled NASDAQ stock news comparing ranked retrieval and
+            learning-to-rank methods. The system evaluates four retrieval pipelines: BM25 baseline,
+            BM25 + TF-IDF reranking, BM25 + OpenAI Embedding reranking, and ColBERT (late interaction).
+            Deployed as a full-stack demo with a Vue.js frontend on Contabo and a Python FastAPI backend
+            on Railway, both containerized with Docker.
+          </p>
+        </section>
+
+        <section>
+          <h2>Dataset</h2>
+          <p>
+            Sourced from the FNSPID (Financial News and Stock Price Integration Dataset), which covers
+            15.7 million financial news articles from 1999 to 2023 across 4,775 S&amp;P500 companies.
+            The corpus was filtered to 16,918 articles published in 2023 from NASDAQ-100 stocks.
+          </p>
+          <p>
+            Queries were synthetically generated using GPT-4o: 3 queries per document, designed to
+            reflect the relevance and information contained in each article. False negatives (9 per query)
+            were sampled from BM25 results at the 90th, 95th, and 99th percentile. The final dataset
+            contains 50,754 queries and 60,000 query-document pairs split into 20k train / 20k validation / 20k test.
+          </p>
+        </section>
+
+        <section>
+          <h2>Methodology</h2>
+          <ul>
+            <li>
+              <strong>BM25</strong> - lexical baseline for initial document retrieval and indexing.
+            </li>
+            <li>
+              <strong>BM25 + TF-IDF</strong> - BM25 retrieves top-30 candidates, then TF-IDF cosine
+              similarity features are combined with BM25 scores and fed into an XGBoost classifier for
+              reranking.
+            </li>
+            <li>
+              <strong>BM25 + OpenAI Embedder</strong> - same pipeline as above but replaces TF-IDF with
+              <code>text-embedding-3-small</code> cosine similarity as the reranking feature.
+            </li>
+            <li>
+              <strong>ColBERT</strong> - late interaction retrieval using ColBERTv2 with a RoBERTa
+              encoder, trained with KL-Divergence loss and hard negative sampling.
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Results</h2>
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Model</th>
+                <th colspan="3">Metrics @10</th>
+                <th colspan="3">Metrics @30</th>
+                <th rowspan="2">Latency (s)</th>
+              </tr>
+              <tr>
+                <th>MRR</th><th>P</th><th>R</th>
+                <th>MRR</th><th>P</th><th>R</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>BM25</td><td>0.415</td><td>0.064</td><td>0.640</td><td>0.0921</td><td>0.0328</td><td>0.1208</td><td>0.324</td></tr>
+              <tr><td>BM25+TFIDF</td><td>0.4178</td><td>0.0639</td><td>0.6390</td><td>0.4178</td><td>0.0257</td><td>0.7715</td><td>0.319</td></tr>
+              <tr><td>BM25+OpenAI</td><td class="best">0.4483</td><td>0.0651</td><td>0.6515</td><td class="best">0.4483</td><td>0.0257</td><td>0.7715</td><td>0.461</td></tr>
+              <tr><td>ColBERT</td><td>0.4368</td><td class="best">0.0655</td><td class="best">0.6555</td><td>0.4442</td><td class="best">0.0259</td><td class="best">0.7780</td><td class="best">0.298</td></tr>
+            </tbody>
+            <caption>MRR, Precision, and Recall at @10 and @30. Latency measured as the average of 10 search runs.</caption>
+          </table>
+          <p>
+            BM25+OpenAI and ColBERT consistently outperform the BM25 and BM25+TFIDF baselines.
+            BM25+OpenAI leads on MRR at both cutoffs, while ColBERT dominates precision and recall
+            with the lowest latency (0.298s).
+          </p>
+        </section>
+
+        <section>
+          <h2>Experiment Overview</h2>
+          <figure>
+            <img src="../assets/projects/nasdaq-stock-news-hybrid-retrieval/experiment-overview.png" alt="Experiment flow: BM25 and ColBERT retrieval baselines with TF-IDF and OpenAI embedding reranking pipelines">
+          </figure>
+        </section>
+
+        <section>
+          <h2>Demo (Screenshot)</h2>
+          <figure>
+            <img src="../assets/projects/nasdaq-stock-news-hybrid-retrieval/nasdaq-stock-news.png" alt="Search demo interface showing ColBERT retrieval results for stock investment queries">
+          </figure>
+        </section>
+
+        <section>
+          <h2>Links</h2>
+          <ul>
+            <li><a href="https://github.com/ghanahmada/finsearch-be" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="vertical-align: -2px; margin-right: 4px;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> Code</a></li>
+          </ul>
+        </section>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Ghana Ahmada Yudistira.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

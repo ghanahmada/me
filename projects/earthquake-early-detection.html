@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earthquake Early Detection System - Ghana Ahmada Yudistira</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="../index.html" class="nav__brand">Ghana</a>
+      <a href="../index.html#projects" class="nav__back">&larr; Back to projects</a>
+    </nav>
+  </header>
+
+  <main>
+    <article class="project-detail">
+      <div class="container">
+        <h1>Earthquake Early Detection System Using Machine Learning</h1>
+        <p class="project-detail__meta">Datavidia, Arkavidia 8.0 (2nd Winner) &middot; Feb 2023</p>
+        <p class="project-detail__stack">Python, LightGBM, CatBoost, LSTM, CNN, Optuna</p>
+        <p>
+          Co-authored with Belati Jagad Bintang Syuhada and Eryawan Presma Yulianrifat.
+        </p>
+
+        <section>
+          <h2>Overview</h2>
+          <p>
+            A two-stage earthquake early warning system built on the STEAD (STanford EArthquake
+            Dataset). The first model predicts earthquake magnitude from processed seismic waveforms
+            using gradient boosting trees (LightGBM, CatBoost). If the predicted magnitude exceeds 4,
+            the raw waveform is forwarded to a second deep learning model (CNN + LSTM) that predicts
+            S-Wave arrival time. By estimating the gap between P-Wave and S-Wave arrival, the system
+            calculates the minimum escape time available before the destructive wave hits.
+          </p>
+          <p>
+            All seismic data is truncated to a few seconds after P-Wave arrival to avoid data leakage,
+            simulating a real-time detection scenario.
+          </p>
+          <figure>
+            <img src="../assets/projects/earthquake-early-detection/planning.jpg" alt="Project planning and problem breakdown for earthquake early detection system">
+          </figure>
+        </section>
+
+        <section>
+          <h2>Dataset</h2>
+          <p>
+            The STEAD dataset contains seismic waveforms recorded across three axes (east-west,
+            north-south, vertical). Each event spans 60 seconds at 100 samples/second (6,000 data
+            points per axis). We used chunks 2-6, totaling approximately 1,000,000 events.
+            Each event includes metadata such as station location, epicenter, P-Wave arrival,
+            S-Wave arrival, and coda end timestamps.
+          </p>
+          <figure>
+            <img src="../assets/projects/earthquake-early-detection/earthquake-measurement.jpg" alt="Seismic wave measurement showing P-Wave, S-Wave, and Coda End markers on three-axis waveforms">
+            <figcaption>Source: BGS Earthquake Seismology.</figcaption>
+          </figure>
+        </section>
+
+        <section>
+          <h2>Feature Engineering</h2>
+          <ul>
+            <li>
+              <strong>Cartesian coordinate rotation</strong> at 30, 45, and 60 degrees to give the
+              model additional spatial perspectives on epicenter locations.
+            </li>
+            <li>
+              <strong>Discrete Fourier Transform (DFT)</strong> on seismic waveforms to extract
+              frequency-domain characteristics, producing 2,400 features (800 per axis), reduced to
+              the top 20 via CatBoost feature importance.
+            </li>
+            <li>
+              <strong>Haversine distance</strong> from epicenter to the nearest tectonic plate boundary.
+            </li>
+            <li>
+              <strong>Waveform aggregation</strong> (min, max, mean, std, range, median, variance)
+              to summarize sequential data for traditional ML models.
+            </li>
+            <li>
+              <strong>IQR-based normalization</strong> to preserve earthquake signal characteristics
+              that standard min-max normalization would distort.
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>System Workflow</h2>
+          <figure>
+            <img src="../assets/projects/earthquake-early-detection/workflow.jpg" alt="Two-stage system workflow: magnitude prediction via gradient boosting, then S-Wave arrival prediction via deep learning for earthquakes above magnitude 4">
+          </figure>
+        </section>
+
+        <section>
+          <h2>Modeling</h2>
+          <h3>Stage 1: Magnitude Prediction</h3>
+          <p>
+            Trained on 353,900 events (P-Wave Arrival &gt; 7s or magnitude &ge; 4) with 89 engineered
+            features. LightGBM with Optuna hyperparameter tuning achieved the best performance.
+            A manual threshold of 3.87 was applied post-prediction to minimize false negatives
+            for significant earthquakes.
+          </p>
+
+          <h3>Stage 2: S-Wave Arrival Prediction</h3>
+          <p>
+            For events classified as magnitude &ge; 4, raw seismic waveforms (truncated at P-Wave
+            arrival) are fed into a deep learning model combining three convolutional layers
+            (32, 64, 96 filters) with LSTM (64 units) for the waveform branch, and a parallel
+            convolutional branch for tabular metadata. Both branches are flattened, concatenated,
+            and passed through three dense layers with L2 regularization.
+          </p>
+          <figure>
+            <img src="../assets/projects/earthquake-early-detection/dl-architecture.jpg" alt="Deep learning architecture: dual-branch CNN+LSTM for waveform data and CNN for tabular metadata, merged through dense layers">
+          </figure>
+        </section>
+
+        <section>
+          <h2>Results</h2>
+          <h3>Magnitude Prediction (Classification at threshold 3.87)</h3>
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>F1-Score</th>
+                <th>Recall</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>CatBoost</td><td>87.433</td><td>88.564</td></tr>
+              <tr><td>LightGBM + Optuna</td><td class="best">89.372</td><td class="best">90.632</td></tr>
+            </tbody>
+            <caption>Post-processed classification results with lowered threshold (3.87) to minimize missed earthquakes.</caption>
+          </table>
+
+          <h3>S-Wave Arrival Prediction</h3>
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Training MAE</th>
+                <th>Validation MAE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Dense Network</td><td>2.7s</td><td>3.8s</td></tr>
+              <tr><td>CNN Network</td><td>1.0s</td><td>1.1s</td></tr>
+              <tr><td>LSTM Network</td><td>1.1s</td><td>1.3s</td></tr>
+              <tr><td>CNN LSTM with Dense</td><td class="best">0.9s</td><td class="best">1.0s</td></tr>
+            </tbody>
+            <caption>Mean Absolute Error for S-Wave arrival time prediction across architectures.</caption>
+          </table>
+
+          <h3>Escape Time Analysis</h3>
+          <figure>
+            <img src="../assets/projects/earthquake-early-detection/escape-time.png" alt="Actual vs predicted escape time scatter plot and bar chart showing whether escape time is greater than predicted">
+          </figure>
+        </section>
+
+        <section>
+          <h2>Links</h2>
+          <ul>
+            <li><a href="https://github.com/ghanahmada/earthquake-early-detection" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="vertical-align: -2px; margin-right: 4px;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> Repository</a></li>
+          </ul>
+        </section>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Ghana Ahmada Yudistira.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

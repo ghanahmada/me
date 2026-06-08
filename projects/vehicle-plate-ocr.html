@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Number Plates Detection - Ghana Ahmada Yudistira</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav">
+      <a href="../index.html" class="nav__brand">Ghana</a>
+      <a href="../index.html#projects" class="nav__back">&larr; Back to projects</a>
+    </nav>
+  </header>
+
+  <main>
+    <article class="project-detail">
+      <div class="container">
+        <h1>Vehicle Number Plates Detection Using Transformer Based OCR</h1>
+        <p class="project-detail__meta">Deep Learning &middot; Jun 2023</p>
+        <p class="project-detail__stack">Python, PyTorch, Hugging Face, Flask</p>
+
+        <section>
+          <h2>Overview</h2>
+          <p>
+            A fine-tuned Transformer-based OCR system for detecting and reading Indonesian vehicle
+            number plates. The model is based on
+            <code>microsoft/trocr-base-printed</code>, fine-tuned on augmented plate images and
+            deployed via Hugging Face with a Flask server and simple HTML frontend.
+          </p>
+          <figure>
+            <img src="../assets/projects/vehicle-plate-ocr/plate-sample.png" alt="Sample Indonesian vehicle number plate showing B 1656 SPW">
+          </figure>
+        </section>
+
+        <section>
+          <h2>Image Preprocessing</h2>
+          <p>Four transformations were applied to augment the training images:</p>
+          <ul>
+            <li><strong>Super resolution</strong> to enhance low-quality plate images</li>
+            <li><strong>Motion blur</strong> to simulate real-world capture conditions</li>
+            <li><strong>Adaptive thresholding</strong> to improve text contrast</li>
+            <li><strong>Bounding box</strong> extraction to isolate the plate region</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Model</h2>
+          <p>
+            Fine-tuned <code>microsoft/trocr-base-printed</code>, a Transformer-based OCR model
+            that combines a Vision Transformer (ViT) encoder with a text decoder for end-to-end
+            optical character recognition on printed text.
+          </p>
+        </section>
+
+        <section>
+          <h2>Deployment</h2>
+          <p>
+            The fine-tuned model is hosted on Hugging Face for API inference. A Flask server wraps
+            the model endpoint, and a simple HTML frontend provides easy interaction for uploading
+            plate images and viewing predictions.
+          </p>
+        </section>
+
+        <section>
+          <h2>Links</h2>
+          <ul>
+            <li><a href="https://huggingface.co/ghanahmada/trocr-base-plate-number" target="_blank" rel="noopener">Hugging Face Model</a></li>
+            <li><a href="https://colab.research.google.com/drive/1_d8bb9ohlz5F4T5Rfk6Kq2kNYg-eqnYe?usp=sharing" target="_blank" rel="noopener">Fine-Tuning Notebook</a></li>
+          </ul>
+        </section>
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Ghana Ahmada Yudistira.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
