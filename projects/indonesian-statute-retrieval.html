@@ -105,6 +105,28 @@
         </section>
 
         <section>
+          <h2>Architecture</h2>
+          <p>
+            StructGNN adapts the Para-GNN framework, which constructs separate query and document
+            subgraphs. Each query is split into sentences (nodes) linked to a full-query root node,
+            and each article is split into sentences linked to paragraph-level root nodes. A shared
+            BGE-M3 encoder produces N-dimensional embeddings for both queries and articles. The
+            query and document subgraphs are then processed through a two-layer EUGAT network that
+            updates node representations via attention-weighted message passing over both node and
+            edge features. The final retrieval score combines the GNN dot-product score with a
+            BM25 lexical score through a learned blending weight.
+          </p>
+          <figure>
+            <img src="../assets/projects/indonesian-statute-retrieval/architecture-paragnn.png" alt="Adapted Para-GNN architecture: encoder producing N-dim embeddings, query and document subgraphs processed through two-layer EUGAT, final score blending GNN and BM25">
+            <figcaption>Adapted Para-GNN (baseline)</figcaption>
+          </figure>
+          <figure>
+            <img src="../assets/projects/indonesian-statute-retrieval/architecture-structgnn.png" alt="StructGNN architecture: encoder embeddings concatenated with 64-dim structural hash vector, projected back to N-dim before EUGAT processing">
+            <figcaption>StructGNN (proposed) - structural hash vectors are concatenated with encoder embeddings and projected back to N-dim before EUGAT</figcaption>
+          </figure>
+        </section>
+
+        <section>
           <h2>Approach</h2>
           <p>
             StructGNN injects hierarchical structure directly into node features rather than constructing
@@ -142,8 +164,8 @@
                 <th colspan="3">Layperson</th>
               </tr>
               <tr>
-                <th>MRR</th><th>R@10</th><th>R@100</th>
-                <th>MRR</th><th>R@10</th><th>R@100</th>
+                <th>MRR@10</th><th>R@10</th><th>R@100</th>
+                <th>MRR@10</th><th>R@10</th><th>R@100</th>
               </tr>
             </thead>
             <tbody>
@@ -156,13 +178,13 @@
               <tr><td>MILCO (LE)</td><td>LexEcho</td><td>0.049</td><td>0.075</td><td>0.272</td><td>0.054</td><td>0.071</td><td>0.285</td></tr>
               <tr class="group-header"><td colspan="8">Finetuned Methods</td></tr>
               <tr><td>CatBoost-BGE</td><td>product features</td><td>0.424</td><td>0.539</td><td>0.741</td><td>0.516</td><td>0.657</td><td>0.825</td></tr>
-              <tr><td>Para-GNN</td><td>adapted</td><td>0.229</td><td>0.485</td><td class="best">0.924</td><td>0.509</td><td>0.646</td><td class="best">0.906</td></tr>
+              <tr><td>Adapted Para-GNN</td><td>adapted</td><td>0.229</td><td>0.485</td><td class="best">0.924</td><td>0.509</td><td>0.646</td><td class="best">0.906</td></tr>
               <tr><td>StructGNN</td><td>struct. hash</td><td class="best">0.440</td><td class="best">0.601</td><td>0.905</td><td class="best">0.650</td><td class="best">0.698</td><td>0.902</td></tr>
               <tr class="group-header"><td colspan="8">Agentic Methods</td></tr>
-              <tr><td>Ag + Dense</td><td>LLM orchestrated</td><td>0.368</td><td>0.314</td><td>-</td><td>0.336</td><td>0.277</td><td>-</td></tr>
-              <tr><td>Ag + StructGNN</td><td>LLM orchestrated</td><td class="best">0.567</td><td class="best">0.628</td><td>-</td><td class="best">0.576</td><td class="best">0.694</td><td>-</td></tr>
+              <tr><td>Agentic + Dense</td><td>LLM orchestrated</td><td>0.368</td><td>0.314</td><td>-</td><td>0.336</td><td>0.277</td><td>-</td></tr>
+              <tr><td>Agentic + StructGNN</td><td>LLM orchestrated</td><td class="best">0.567</td><td class="best">0.628</td><td>-</td><td class="best">0.576</td><td class="best">0.694</td><td>-</td></tr>
             </tbody>
-            <caption>Ag = Agentic. Bold = best in group (Wilcoxon signed-rank, Holm-corrected <em>p</em> &lt; 0.05).</caption>
+            <caption>Bold = best in group (Wilcoxon signed-rank, Holm-corrected <em>p</em> &lt; 0.05).</caption>
           </table>
 
           <h3>Table 4.2: Results on Additional Corpora</h3>
@@ -175,9 +197,9 @@
                 <th colspan="3">COLIEE (EN)</th>
               </tr>
               <tr>
-                <th>MRR</th><th>R@10</th><th>R@100</th>
-                <th>MRR</th><th>R@10</th><th>R@100</th>
-                <th>MRR</th><th>R@10</th><th>R@100</th>
+                <th>MRR@10</th><th>R@10</th><th>R@100</th>
+                <th>MRR@10</th><th>R@10</th><th>R@100</th>
+                <th>MRR@10</th><th>R@10</th><th>R@100</th>
               </tr>
             </thead>
             <tbody>
@@ -190,13 +212,13 @@
               <tr><td>MILCO (LE)</td><td>0.297</td><td>0.317</td><td>0.614</td><td>0.492</td><td>0.558</td><td>0.763</td><td>0.745</td><td>0.897</td><td>0.981</td></tr>
               <tr class="group-header"><td colspan="10">Finetuned Methods</td></tr>
               <tr><td>CatBoost-BGE</td><td>0.303</td><td>0.280</td><td>0.387</td><td>0.253</td><td>0.383</td><td>0.581</td><td>0.675</td><td>0.832</td><td>0.935</td></tr>
-              <tr><td>Para-GNN</td><td>0.441</td><td>0.468</td><td>0.766</td><td>0.520</td><td>0.629</td><td>0.828</td><td>0.800</td><td>0.935</td><td>0.981</td></tr>
+              <tr><td>Adapted Para-GNN</td><td>0.441</td><td>0.468</td><td>0.766</td><td>0.520</td><td>0.629</td><td>0.828</td><td>0.800</td><td>0.935</td><td>0.981</td></tr>
               <tr><td>StructGNN</td><td class="best">0.570</td><td class="best">0.606</td><td class="best">0.861</td><td class="best">0.599</td><td class="best">0.697</td><td class="best">0.887</td><td class="best">0.812</td><td>0.944</td><td class="best">1.000</td></tr>
               <tr class="group-header"><td colspan="10">Agentic Methods</td></tr>
-              <tr><td>Ag + Dense</td><td>0.552</td><td>0.459</td><td>-</td><td>0.687</td><td>0.708</td><td>-</td><td class="best">0.917</td><td class="best">0.972</td><td>-</td></tr>
-              <tr><td>Ag + StructGNN</td><td class="best">0.658</td><td class="best">0.636</td><td>-</td><td class="best">0.736</td><td class="best">0.779</td><td>-</td><td>0.907</td><td>0.972</td><td>-</td></tr>
+              <tr><td>Agentic + Dense</td><td>0.552</td><td>0.459</td><td>-</td><td>0.687</td><td>0.708</td><td>-</td><td class="best">0.917</td><td class="best">0.972</td><td>-</td></tr>
+              <tr><td>Agentic + StructGNN</td><td class="best">0.658</td><td class="best">0.636</td><td>-</td><td class="best">0.736</td><td class="best">0.779</td><td>-</td><td>0.907</td><td>0.972</td><td>-</td></tr>
             </tbody>
-            <caption>Ag = Agentic. Bold = best in group (Wilcoxon signed-rank, Holm-corrected <em>p</em> &lt; 0.05).</caption>
+            <caption>Bold = best in group (Wilcoxon signed-rank, Holm-corrected <em>p</em> &lt; 0.05).</caption>
           </table>
 
           <p>

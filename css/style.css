@@ -484,6 +484,7 @@ ul, ol {
   font-size: 0.85rem;
   color: var(--color-text-muted);
   margin-top: var(--space-1);
+  text-align: center;
 }
 
 /* ---------------------------------- */
